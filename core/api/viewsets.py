@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.models import PontoTuristico
@@ -9,9 +10,12 @@ from .serializers import PontoTuristicoSerializer
 class PontoTuristicoViewSet(viewsets.ModelViewSet):
     serializer_class = PontoTuristicoSerializer
     filter_backends = [SearchFilter, OrderingFilter]
+    permission_classes = [IsAuthenticated]
+
     search_fields = ['nome','descricao','endereco__linha1']
     ordering_fields = ['nome']
-    ordering = ['nome'] #default
+    ordering = ['nome'] #default é por pk
+    #lookup_field = 'nome' precisa um campo exclusivo, é a identificação do objeto, geralmente é o pk
 
     def get_queryset(self):
         id = self.request.query_params.get('id',None)
