@@ -23,8 +23,6 @@ from comentarios.api.viewsets import ComentarioViewSet
 from avaliacoes.api.viewsets import AvaliacaoViewSet
 
 router = routers.DefaultRouter()
-
-#basename determina qual o model vinculado ao viewset
 router.register(r'pontoturistico', PontoTuristicoViewSet, basename='PontoTuristico')
 router.register(r'atracoes', AtracaoViewSet)
 router.register(r'enderecos', EnderecoViewSet)
