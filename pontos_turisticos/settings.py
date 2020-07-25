@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework',
     'core',
     'atracoes',
@@ -128,3 +129,8 @@ STATIC_URL = '/static/'
 #configuração para upload de imagens root é nome da pasta e url
 MEDIA_ROOT = 'imagens'
 MEDIA_URL = '/media/'
+
+#django-filter global
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
