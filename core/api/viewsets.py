@@ -1,7 +1,8 @@
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from core.models import PontoTuristico
@@ -9,12 +10,14 @@ from .serializers import PontoTuristicoSerializer
 
 class PontoTuristicoViewSet(viewsets.ModelViewSet):
     serializer_class = PontoTuristicoSerializer
-    filter_backends = [SearchFilter, OrderingFilter]
-    permission_classes = [IsAuthenticated]
 
+    permission_classes = [IsAdminUser]
+    authentication_classes = (TokenAuthentication,)
+
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['nome','descricao','endereco__linha1']
     ordering_fields = ['nome']
-    ordering = ['nome'] #default é por pk
+    #ordering = ['nome'] default é por pk
     #lookup_field = 'nome' precisa um campo exclusivo, é a identificação do objeto, geralmente é o pk
 
     def get_queryset(self):
@@ -50,7 +53,7 @@ class PontoTuristicoViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super(PontoTuristicoViewSet,self).retrieve(request, *args, **kwargs)
 
-    @action(methods=['get'], detail=True)
-    def denunciar(self, request, pk=None):
+    @action(methods=['get'], detail=False)
+    def completo(self, request, pk=None):
         return Response({"denunciar": "eita!"})
 

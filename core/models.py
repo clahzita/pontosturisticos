@@ -16,3 +16,8 @@ class PontoTuristico(models.Model):
 
     def __str__(self):
         return self.nome
+
+    #informação complementar
+    @property
+    def descricao_completa2(self):
+        return "Numero de atracoes: " + str(self.atracoes.values())
