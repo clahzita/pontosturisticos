@@ -1,31 +1,63 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from rest_framework.fields import SerializerMethodField
 
 from atracoes.api.serializers import AtracaoSerializer
+from atracoes.models import Atracao
 from avaliacoes.api.serializers import AvaliacaoSerializer
 from comentarios.api.serializers import ComentarioSerializer
-from core.models import PontoTuristico
+from core.models import PontoTuristico, DocIdentificacao
 from enderecos.api.serializers import EnderecoSerializer
+from enderecos.models import Endereco
 
 
+class DocIdentificacaoSerializer(ModelSerializer):
+    class Meta:
+        model = DocIdentificacao
+        fields = '__all__'
 
-class CompletoPontoTuristicoSerializer(serializers.ModelSerializer):
+class PontoTuristicoSerializer(ModelSerializer):
     atracoes = AtracaoSerializer(many=True)
     endereco = EnderecoSerializer()
-    comentarios = ComentarioSerializer(many=True)
-    avaliacoes = AvaliacaoSerializer(many=True)
-
-    class Meta:
-        model = PontoTuristico
-        fields = ['id','nome','descricao','aprovado','foto','atracoes','endereco','comentarios','avaliacoes']
-
-class PontoTuristicoSerializer(serializers.ModelSerializer):
     descricao_completa = SerializerMethodField()
+    doc_identificacao = DocIdentificacaoSerializer()
 
     class Meta:
         model = PontoTuristico
-        fields = ['id','nome','descricao','aprovado','foto','atracoes','endereco',
+        fields = ['id','nome','descricao','doc_identificacao','aprovado','foto','atracoes','endereco',
                   'comentarios','avaliacoes', 'descricao_completa', 'descricao_completa2']
+        read_only_fields = ('comentarios','avaliacoes')
+        depth=1
+
+    def cria_atracoes(self, atracoes, ponto):
+        for atracao in atracoes:
+            at = Atracao.objects.create(**atracao)
+            ponto.atracoes.add(at)
+
+    def create(self, validated_data):
+        atracoes = validated_data['atracoes']
+        del validated_data['atracoes']
+
+        endereco = validated_data['endereco']
+        del validated_data['endereco']
+
+        docdata = validated_data['doc_identificacao']
+        del validated_data['doc_identificacao']
+
+
+        #** diz que o django vai interar nessa variavel diccionario para criar o ponto turistico no banco de dados
+        ponto = PontoTuristico.objects.create(**validated_data)
+
+        self.cria_atracoes(atracoes,ponto)
+
+        end = Endereco.objects.create(**endereco)
+        ponto.endereco = end
+        doc = DocIdentificacao.objects.create(**docdata)
+        ponto.doc_identificacao = doc
+
+        ponto.save()
+
+        return ponto
+
 
     def get_descricao_completa(self, obj):
         return "%s - %s" % (obj.nome, obj.descricao)

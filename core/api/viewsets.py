@@ -16,7 +16,7 @@ class PontoTuristicoViewSet(viewsets.ModelViewSet):
 
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['nome','descricao','endereco__linha1']
-    ordering_fields = ['nome']
+    #ordering_fields = ['nome']
     #ordering = ['nome'] default é por pk
     #lookup_field = 'nome' precisa um campo exclusivo, é a identificação do objeto, geralmente é o pk
 
@@ -57,3 +57,14 @@ class PontoTuristicoViewSet(viewsets.ModelViewSet):
     def completo(self, request, pk=None):
         return Response({"denunciar": "eita!"})
 
+    @action(methods=['post'], detail=True)
+    def associa_atracoes(self, request, id=None):
+        atracoes = request.data['ids']
+
+        ponto = PontoTuristico.objects.get(id=id)
+
+        ponto.atracoes.set(atracoes)
+
+        ponto.save()
+
+        return Response({ponto.atracoes})
