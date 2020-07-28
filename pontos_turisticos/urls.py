@@ -41,4 +41,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api-token-auth/', obtain_auth_token), #rota para gerar token com username+password
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #TODO tirar quando for para produção, uso apenas em desenvolvimento!!!!
+] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #TODO tirar quando for para produção, uso apenas em desenvolvimento!!!!
