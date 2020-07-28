@@ -134,7 +134,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 #configuração para upload de imagens root é nome da pasta e url
-MEDIA_ROOT = 'imagens'
+MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
 #django-filter global
